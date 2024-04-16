@@ -5,10 +5,74 @@ metadata:
   namespace: {{.Namespace}}
 rules:
 - apiGroups:
-    - security.openshift.io
+  - security.openshift.io
   resourceNames:
-    - privileged
+  - privileged
   resources:
-    - securitycontextconstraints
+  - securitycontextconstraints
   verbs:
-    - use
+  - use
+- apiGroups:
+  - config.openshift.io
+  resources:
+  - classifierconfigs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - config.openshift.io
+  resources:
+  - classifierconfigs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - config.openshift.io
+  resources:
+  - classifierconfigs/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - config.openshift.io
+  resources:
+  - servicefunctionchains
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - config.openshift.io
+  resources:
+  - servicefunctionchains/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - config.openshift.io
+  resources:
+  - servicefunctionchains/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch

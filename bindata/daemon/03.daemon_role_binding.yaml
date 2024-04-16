@@ -9,5 +9,6 @@ subjects:
 roleRef:
   kind: Role
   name: dpu-daemon-role
+  namespace: {{.Namespace}}
   apiGroup: rbac.authorization.k8s.io
 

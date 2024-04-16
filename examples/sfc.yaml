@@ -1,0 +1,11 @@
+apiVersion: config.openshift.io/v1
+kind: ServiceFunctionChain
+metadata:
+  name: sfc
+  namespace: dpu-operator-system
+spec:
+  networkFunctions:
+  - name: firewall
+    image: quay.io/sdaniele/ipu-opi-plugins-network-function:latest
+  - name: metrics
+    image: quay.io/sdaniele/ipu-opi-plugins-network-function:latest

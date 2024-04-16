@@ -6,6 +6,21 @@ metadata:
       [
         {
           "apiVersion": "config.openshift.io/v1",
+          "kind": "ClassifierConfig",
+          "metadata": {
+            "labels": {
+              "app.kubernetes.io/created-by": "dpu-operator",
+              "app.kubernetes.io/instance": "classifierconfig-sample",
+              "app.kubernetes.io/managed-by": "kustomize",
+              "app.kubernetes.io/name": "classifierconfig",
+              "app.kubernetes.io/part-of": "dpu-operator"
+            },
+            "name": "classifierconfig-sample"
+          },
+          "spec": null
+        },
+        {
+          "apiVersion": "config.openshift.io/v1",
           "kind": "DpuOperatorConfig",
           "metadata": {
             "labels": {
@@ -32,6 +47,11 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
+    - description: ClassifierConfig is the Schema for the classifierconfigs API
+      displayName: Classifier Config
+      kind: ClassifierConfig
+      name: classifierconfigs.config.openshift.io
+      version: v1
     - description: DpuOperatorConfig is the Schema for the dpuoperatorconfigs API
       displayName: Dpu Operator Config
       kind: DpuOperatorConfig
@@ -83,6 +103,32 @@ spec:
           - patch
           - update
           - watch
+        - apiGroups:
+          - config.openshift.io
+          resources:
+          - classifierconfigs
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - config.openshift.io
+          resources:
+          - classifierconfigs/finalizers
+          verbs:
+          - update
+        - apiGroups:
+          - config.openshift.io
+          resources:
+          - classifierconfigs/status
+          verbs:
+          - get
+          - patch
+          - update
         - apiGroups:
           - config.openshift.io
           resources:

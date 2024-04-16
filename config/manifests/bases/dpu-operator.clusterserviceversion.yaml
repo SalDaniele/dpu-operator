@@ -10,10 +10,21 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
+    - description: ClassifierConfig is the Schema for the classifierconfigs API
+      displayName: Classifier Config
+      kind: ClassifierConfig
+      name: classifierconfigs.config.openshift.io
+      version: v1
     - description: DpuOperatorConfig is the Schema for the dpuoperatorconfigs API
       displayName: Dpu Operator Config
       kind: DpuOperatorConfig
       name: dpuoperatorconfigs.config.openshift.io
+      version: v1
+    - description: ServiceFunctionChain is the Schema for the servicefunctionchains
+        API
+      displayName: Service Function Chain
+      kind: ServiceFunctionChain
+      name: servicefunctionchains.config.openshift.io
       version: v1
   description: This operator will manage and configure data processing unit (DPUs)
     to be used in accelerating/offloading k8s networking functions
