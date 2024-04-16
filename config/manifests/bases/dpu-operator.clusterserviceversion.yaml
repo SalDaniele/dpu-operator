@@ -10,6 +10,11 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
+    - description: ClassifierConfig is the Schema for the classifierconfigs API
+      displayName: Classifier Config
+      kind: ClassifierConfig
+      name: classifierconfigs.config.openshift.io
+      version: v1
     - description: DpuOperatorConfig is the Schema for the dpuoperatorconfigs API
       displayName: Dpu Operator Config
       kind: DpuOperatorConfig
