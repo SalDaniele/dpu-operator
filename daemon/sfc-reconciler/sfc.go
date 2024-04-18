@@ -16,6 +16,7 @@ import (
 
 	"github.com/go-logr/logr"
 	configv1 "github.com/openshift/dpu-operator/api/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 )
 
 // SfcReconciler reconciles a Service Function Chain object
@@ -26,20 +27,31 @@ type SfcReconciler struct {
 }
 
 func networkFunctionPod(name string, image string) *corev1.Pod {
-    return &corev1.Pod{
-        ObjectMeta: metav1.ObjectMeta{
-            Name:      name,
-            Namespace: "dpu-operator-system",
-        },
-        Spec: corev1.PodSpec{
-            Containers: []corev1.Container{
-                {
-                    Name:  name,
-                    Image: image,
-                },
-            },
-        },
-    }
+	return &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      name,
+			Namespace: "dpu-operator-system",
+			Annotations: map[string]string{
+				"k8s.v1.cni.cncf.io/networks": "dpunfcni-conf, dpunfcni-conf",
+			},
+		},
+		Spec: corev1.PodSpec{
+			Containers: []corev1.Container{
+				{
+					Name:  name,
+					Image: image,
+					Resources: corev1.ResourceRequirements{
+						Requests: corev1.ResourceList{
+							"openshift.io/dpu": resource.MustParse("2"),
+						},
+						Limits: corev1.ResourceList{
+							"openshift.io/dpu": resource.MustParse("2"),
+						},
+					},
+				},
+			},
+		},
+	}
 }
 
 func (r *SfcReconciler) createOrUpdatePod(ctx context.Context, pod *corev1.Pod) error {
