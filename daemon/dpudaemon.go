@@ -128,6 +128,15 @@ func (d *DpuDaemon) ListenAndServe() error {
 	    }
 	}()
 
+	go func() {
+		d.log.Info("Starging CNI server")
+	    if err := d.cniserver.ListenAndServe(); err != nil {
+	        done <- err
+	    } else {
+	        done <- nil
+	    }
+	}()
+
 	d.setupReconcilers()
 	go func() {
 		d.log.Info("Starting manager")
