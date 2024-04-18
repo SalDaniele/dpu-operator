@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: vsp
+spec:
+  selector:
+    matchLabels:
+      name: vsp
+  template:
+    metadata:
+      labels:
+        name: vsp
+    spec:
+      hostNetwork: true
+      automountServiceAccountToken: false
+      containers:
+      - name: appcntr1
+        image: quay.io/wizhao/intel-vsp:April18
+        securityContext:
+          privileged: true
+        command: [ "/usr/bin/ipuplugin" ]
+        args: [ "--bridgeType=linux", "--interface=enp0s1f0d3", "--ovsCliDir=/opt/p4/p4-cp-nws", "-v=debug"]
+        volumeMounts:
+        - name: vendor-plugin-sock
+          mountPath: /var/run/dpu-daemon/
+      volumes:
+      - name: vendor-plugin-sock
+        hostPath:
+          path: /var/run/dpu-daemon/
+

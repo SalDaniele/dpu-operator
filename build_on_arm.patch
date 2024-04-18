@@ -1,0 +1,40 @@
+diff --git a/Dockerfile.daemon.rhel b/Dockerfile.daemon.rhel
+index 38c643a..ed257c9 100644
+--- a/Dockerfile.daemon.rhel
++++ b/Dockerfile.daemon.rhel
+@@ -1,5 +1,5 @@
+ # Build the manager binary
+-FROM registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.21-openshift-4.16 AS builder
++FROM registry-proxy.engineering.redhat.com/rh-osbs/openshift-golang-builder:v1.21.7-202403061534.el9.gab74a9a.el9 AS builder
+ ARG TARGETOS
+ ARG TARGETARCH
+ 
+@@ -17,7 +17,7 @@ RUN mkdir -p /bin && \
+ 
+ # Use distroless as minimal base image to package the manager binary
+ # Refer to https://github.com/GoogleContainerTools/distroless for more details
+-FROM registry.ci.openshift.org/ocp/4.16:base-rhel9
++FROM registry-proxy.engineering.redhat.com/rh-osbs/openshift-golang-builder:v1.21.7-202403061534.el9.gab74a9a.el9
+ WORKDIR /
+ COPY --from=builder /bin/daemon .
+ COPY --from=builder /bin/dpu-cni .
+diff --git a/Dockerfile.rhel b/Dockerfile.rhel
+index 203ce49..2e15b5d 100644
+--- a/Dockerfile.rhel
++++ b/Dockerfile.rhel
+@@ -1,5 +1,5 @@
+ # Build the manager binary
+-FROM registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.21-openshift-4.16 AS builder
++FROM registry-proxy.engineering.redhat.com/rh-osbs/openshift-golang-builder:v1.21.7-202403061534.el9.gab74a9a.el9 AS builder
+ ARG TARGETOS
+ ARG TARGETARCH
+ 
+@@ -19,7 +19,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o ma
+ 
+ # Use distroless as minimal base image to package the manager binary
+ # Refer to https://github.com/GoogleContainerTools/distroless for more details
+-FROM registry.ci.openshift.org/ocp/4.16:base-rhel9
++FROM registry-proxy.engineering.redhat.com/rh-osbs/openshift-golang-builder:v1.21.7-202403061534.el9.gab74a9a.el9
+ WORKDIR /
+ COPY --from=builder /workspace/manager .
+ COPY --from=builder /workspace/bindata /bindata

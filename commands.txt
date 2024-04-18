@@ -1,0 +1,16 @@
+   30  podman pull quay.io/sdaniele/dpu-operator:v1
+   36  podman pull quay.io/sdaniele/dpu-operator:v1
+   42  podman pull quay.io/sdaniele/dpu-operator:v1
+  184  podman build -v /tmp/go:/go:z -f Dockerfile.rhel -t wsfd-advnetlab239.anl.eng.bos2.dc.redhat.com:5000/dpu-operator:002-dev                                                                
+  189  podman login --authfile ~/.docker/config.json -u sdaniele@redhat.com -p sha256~DW9oQprgez1d_DDeu0FPjd8oH0cDgysbRmem3YRCuE8 registry.ci.openshift.org
+  194  podman build -v /tmp/go:/go:z -f Dockerfile.rhel -t wsfd-advnetlab239.anl.eng.bos2.dc.redhat.com:5000/dpu-operator:002-dev
+  200  podman pull wsfd-advnetlab239.anl.eng.bos2.dc.redhat.com:5000/dpu-operator:002-dev
+  201  podman pull wsfd-advnetlab239.anl.eng.bos2.dc.redhat.com:5000/dpu-operator:002-dev > output.txt
+  203  podman pull wsfd-advnetlab239.anl.eng.bos2.dc.redhat.com:5000/dpu-operator:002-dev 2>&1 > output.txt
+  206  podman pull wsfd-advnetlab239.anl.eng.bos2.dc.redhat.com:5000/dpu-operator:002-dev 2>&1 > output.txt
+  208  podman pull wsfd-advnetlab239.anl.eng.bos2.dc.redhat.com:5000/dpu-operator:002-dev &> output.txt
+  213  podman pull wsfd-advnetlab239.anl.eng.bos2.dc.redhat.com:5000/dpu-operator:002-dev &> output.txt
+  216  podman pull wsfd-advnetlab239.anl.eng.bos2.dc.redhat.com:5000/dpu-daemon:dev
+  224  podman build -v /tmp/go:/go:z -f Dockerfile.rhel -t wsfd-advnetlab239.anl.eng.bos2.dc.redhat.com:5000/dpu-operator:002-dev
+  225  podman build -f Dockerfile.rhel -t wsfd-advnetlab239.anl.eng.bos2.dc.redhat.com:5000/dpu-operator:002-dev
+  226  history | grep podman > commands.txt
