@@ -35,6 +35,7 @@ type DpuDaemon struct {
 	cniServerPath string
 	cniserver     *cniserver.Server
 	manager       ctrl.Manager
+	macStore      map[string][]string
 }
 
 func (s *DpuDaemon) CreateBridgePort(context context.Context, bpr *pb.CreateBridgePortRequest) (*pb.BridgePort, error) {
@@ -54,6 +55,7 @@ func NewDpuDaemon(vsp plugin.VendorPlugin, dp deviceplugin.DevicePlugin) *DpuDae
 		dp:            dp,
 		cniServerPath: cnitypes.ServerSocketPath,
 		log:           ctrl.Log.WithName("DpuDaemon"),
+		macStore:      make(map[string][]string),
 	}
 }
 
@@ -62,6 +64,13 @@ func (d *DpuDaemon) cniCmdNfAddHandler(req *cnitypes.PodRequest) (*cni100.Result
 	res, err := networkfn.CmdAdd(req)
 	if err != nil {
 		return nil, fmt.Errorf("SRIOV manager failed in add handler: %v", err)
+	}
+
+	d.macStore[req.Netns] = append(d.macStore[req.Netns], req.CNIConf.MAC)
+	if len(d.macStore[req.Netns]) == 2 {
+		d.log.Info("cniCmdNfAddHandler", "req.Netns", req.Netns)
+		macs := d.macStore[req.Netns]
+		d.vsp.CreateNetworkFunction(macs[0], macs[1])
 	}
 	d.log.Info("cniCmdNfAddHandler CmdAdd succeeded")
 	return res, nil
@@ -73,6 +82,16 @@ func (d *DpuDaemon) cniCmdNfDelHandler(req *cnitypes.PodRequest) (*cni100.Result
 	if err != nil {
 		return nil, errors.New("SRIOV manager failed in del handler")
 	}
+
+    macs := d.macStore[req.Netns]
+
+	if len(macs) == 2 {
+		d.log.Info("cniCmdNfDelHandler", "req.Netns", req.Netns)
+		d.vsp.DeleteNetworkFunction(macs[0], macs[1])
+	}
+
+	d.macStore[req.Netns] = macs[:len(macs) - 1]
+
 	d.log.Info("cniCmdNfDelHandler CmdDel succeeded")
 	return nil, nil
 }
