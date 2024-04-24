@@ -5,7 +5,5 @@ metadata:
   namespace: dpu-operator-system
 spec:
   networkFunctions:
-  - name: firewall
-    image: quay.io/sdaniele/ipu-opi-plugins-network-function:latest
   - name: metrics
     image: quay.io/sdaniele/ipu-opi-plugins-network-function:latest
