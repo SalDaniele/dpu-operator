@@ -19,8 +19,8 @@ spec:
         name: manager
         env:
         - name: DPU_DAEMON_IMAGE
-          value: localhost:5000/dpu-daemon:dev
+          value: wsfd-advnetlab218.anl.eng.bos2.dc.redhat.com:5000/dpu-daemon:dev-3
         - name: IMAGE_PULL_POLICIES
-          value: Always
-        image: localhost:5000/dpu-operator:dev
-        imagePullPolicy: Always
+          value: IfNotPresent
+        image: wsfd-advnetlab218.anl.eng.bos2.dc.redhat.com:5000/dpu-operator:dev-3
+        imagePullPolicy: IfNotPresent
