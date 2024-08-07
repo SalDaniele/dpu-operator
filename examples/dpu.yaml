@@ -4,3 +4,7 @@ metadata:
   name: dpu-operator-config
 spec:
   mode: dpu
+  vspIMages:
+  # Note: the following are placeholder values and should be updated by the user accordingly
+  - IntelVSP: quay.io/openshift/origin-ipu-vsp:4.18
+  # TODO: Add additional supported vendor image fields

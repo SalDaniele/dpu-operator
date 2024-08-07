@@ -48,6 +48,14 @@ spec:
                   Mode can be "host" or "dpu" and it defines on which side we are
                   TODO: add support for auto
                 type: string
+              vspImages:
+                description: VspImages is a list of VSP image URIs
+                items:
+                  properties:
+                    intelVSP:
+                      type: string
+                  type: object
+                type: array
             type: object
           status:
             description: DpuOperatorConfigStatus defines the observed state of DpuOperatorConfig

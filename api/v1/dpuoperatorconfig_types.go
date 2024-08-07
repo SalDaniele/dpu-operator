@@ -23,6 +23,10 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+type VspImage struct {
+	IntelVSP string `json:"intelVSP,omitempty"`
+}
+
 // DpuOperatorConfigSpec defines the desired state of DpuOperatorConfig
 type DpuOperatorConfigSpec struct {
 	// Mode can be "host" or "dpu" and it defines on which side we are
@@ -31,6 +35,9 @@ type DpuOperatorConfigSpec struct {
 
 	// Set log level of the operator. Edit dpuoperatorconfig_types.go to remove/update
 	LogLevel int `json:"logLevel,omitempty"`
+
+	// VspImages is a list of VSP image URIs
+	VspImages []VspImage `json:"vspImages,omitempty"`
 }
 
 // DpuOperatorConfigStatus defines the observed state of DpuOperatorConfig
