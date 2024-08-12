@@ -124,6 +124,12 @@ func (r *DpuOperatorConfigReconciler) createCommonData(cfg *configv1.DpuOperator
 		"DpuOperatorDaemonImage": r.dpuDaemonImage,
 		"ResourceName":           "openshift.io/dpu", // FIXME: Hardcode for now
 	}
+
+	for _, vspImage := range cfg.Spec.VspImages {
+		if vspImage.IntelVSP != "" {
+			data["IntelVSP"] = vspImage.IntelVSP
+		}
+	}
 	return data
 }
 

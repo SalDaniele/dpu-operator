@@ -32,6 +32,8 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+        - name: INTEL_VSP_IMAGE
+          value: {{.IntelVSP}}
         - name: NAMESPACE
           value: {{.Namespace}}
         volumeMounts:
