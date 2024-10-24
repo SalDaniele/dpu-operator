@@ -73,15 +73,15 @@ func (s *sriovDeviceHandler) ensureConnected() error {
 
 // SetupDevices
 func (s *sriovDeviceHandler) SetupDevices() error {
+	s.setupDevicesDone = make(chan struct{})
+
+	defer close(s.setupDevicesDone)
+
 	// Currently NF devices do not require any setup outside the VSP
 	if s.dpuMode {
 		s.log.Info(("Dpu mode detected, skipping devHandler devices setup"))
 		return nil
 	}
-
-	s.setupDevicesDone = make(chan struct{})
-
-	defer close(s.setupDevicesDone)
 
 	err := s.ensureConnected()
 	if err != nil {
@@ -104,6 +104,18 @@ func (s *sriovDeviceHandler) SetupDevices() error {
 	s.log.Info("Num vfs set to %d by vsp", numVfs)
 
 	return nil
+}
+
+func WithDpuMode(dpuMode bool) func(*sriovDeviceHandler) {
+	return func(d *sriovDeviceHandler) {
+		d.dpuMode = dpuMode
+	}
+}
+
+func WithPathManager(pathManager utils.PathManager) func(*sriovDeviceHandler) {
+	return func(d *sriovDeviceHandler) {
+		d.pathManager = pathManager
+	}
 }
 
 func NewSriovDeviceHandler(opts ...func(*sriovDeviceHandler)) *sriovDeviceHandler {

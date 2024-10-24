@@ -9,7 +9,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	nfdevicehandler "github.com/openshift/dpu-operator/internal/daemon/device-handler/nf-device-handler"
+	sriovdevicehandler "github.com/openshift/dpu-operator/internal/daemon/device-handler/sriov-device-handler"
 	deviceplugin "github.com/openshift/dpu-operator/internal/daemon/device-plugin"
 	"github.com/openshift/dpu-operator/internal/daemon/plugin"
 	mockvsp "github.com/openshift/dpu-operator/internal/daemon/vendor-specific-plugins/mock-vsp"
@@ -68,9 +68,10 @@ var _ = g.Describe("DPU Daemon", Ordered, func() {
 		dpuPlugin := plugin.NewGrpcPlugin(true,
 			client,
 			plugin.WithPathManager(pathManager))
-		nfDeviceHandler := nfdevicehandler.NewNfDeviceHandler(
-			nfdevicehandler.WithPathManager(pathManager))
-		dp := deviceplugin.NewDevicePlugin(nfDeviceHandler,
+		sriovDeviceHandler := sriovdevicehandler.NewSriovDeviceHandler(
+			sriovdevicehandler.WithPathManager(pathManager),
+			sriovdevicehandler.WithDpuMode(true))
+		dp := deviceplugin.NewDevicePlugin(sriovDeviceHandler,
 			deviceplugin.WithPathManager(pathManager))
 		dpuDaemon = NewDpuDaemon(dpuPlugin, dp, config,
 			WithPathManager(pathManager))
