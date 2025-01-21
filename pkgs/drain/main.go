@@ -9,19 +9,29 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/kubernetes"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"github.com/k8snetworkplumbingwg/sriov-network-operator/pkg/platforms"
+	"github.com/k8snetworkplumbingwg/sriov-network-operator/pkg/drain"
+	"github.com/k8snetworkplumbingwg/sriov-network-operator/pkg/vars"
+	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
 func main() {
+        // Set up the logger as the very first thing
+        zapLogger := zap.New(zap.UseDevMode(true), zap.Level(zap.DebugLevel))
+	log.SetLogger(zapLogger)
 	// set up args, namely kubeconfig / node name
 	fmt.Printf("starting main program\n")
-	kubeconfig := flag.String("kubeconfig", "test", "Location of your kubeconfig")
-	nodeName := flag.String("node", "", "Name of the node to drain.")
+	kubeconfig := flag.String("test-kubeconfig", "test", "Location of your kubeconfig")
+	nodeName := flag.String("test-node", "", "Name of the node to drain.")
 	flag.Parse()
 	fmt.Printf("flag: %v:\n", *kubeconfig)
 	fmt.Printf("node: %v:\n", *nodeName)
 
 	// Load Kubernetes config
 	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	vars.Config = config
 	if err != nil {
 		fmt.Printf("Error loading kubeconfig: %v\n", err)
 		os.Exit(1)
@@ -45,8 +55,39 @@ func main() {
 	fmt.Printf("Node Labels: %v\n", node.Labels)
 
 
-	// Now do the platform specific stuff
+	// Now do the drainer specific stuff
+	fmt.Printf("creating platform helper\n")
+	pH, err := platforms.NewDefaultPlatformHelper()
+	if err != nil {
+		fmt.Printf("couldn't create openshift context %v\n", err)
+		os.Exit(1)
+	}
+
+	if pH == nil {
+		fmt.Printf("nil platformHelpers")
+		os.Exit(1)
+	} else {
+		fmt.Printf("not nil")
+	}
+
+	fmt.Printf("creating drainer helper\n")
+	drainer, err := drain.NewDrainer(pH)
+	if err != nil {
+		fmt.Printf("Error creating Drainer: %v\n", err)
+		os.Exit(1)
+	}
 
 
+	fmt.Printf("Draining node\n")
+	drainSuccess, err := drainer.DrainNode(context.TODO(), node, true)
+	if err != nil {
+		fmt.Printf("Error draining node: %v\n", err)
+		os.Exit(1)
+	}
 
+	if drainSuccess {
+		fmt.Printf("Successfully drained node: %s\n", *nodeName)
+	} else {
+		fmt.Printf("Failed to drain node: %s\n", *nodeName)
+	}
 }
