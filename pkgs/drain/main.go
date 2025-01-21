@@ -13,14 +13,19 @@ import (
 	"github.com/k8snetworkplumbingwg/sriov-network-operator/pkg/platforms"
 	"github.com/k8snetworkplumbingwg/sriov-network-operator/pkg/drain"
 	"github.com/k8snetworkplumbingwg/sriov-network-operator/pkg/vars"
+
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	. "github.com/onsi/ginkgo/v2"
+	"go.uber.org/zap/zapcore"
 )
 
-func main() {
-        // Set up the logger as the very first thing
-        zapLogger := zap.New(zap.UseDevMode(true), zap.Level(zap.DebugLevel))
-	log.SetLogger(zapLogger)
+	func main() {
+	// Set up the logger as the very first thing
+	log.SetLogger(zap.New(
+		zap.WriteTo(GinkgoWriter),
+		zap.Level(zapcore.Level(-2)),
+		zap.UseDevMode(true)))
 	// set up args, namely kubeconfig / node name
 	fmt.Printf("starting main program\n")
 	kubeconfig := flag.String("test-kubeconfig", "test", "Location of your kubeconfig")
