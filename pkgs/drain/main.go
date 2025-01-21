@@ -1,72 +1,52 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
-	"log"
+	"os"
+	"context"
 
-	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
-	"k8s.io/client-go/util/homedir"
-
-	platforms "github.com/SalDaniele/dpu-operator/pkgs/drain/platform"
-	"github.com/k8snetworkplumbingwg/sriov-network-operator/pkg/drain"
+	"k8s.io/client-go/kubernetes"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func main() {
-	// Load kubeconfig from file or default location
-	kubeconfig := ""
-	if home := homedir.HomeDir(); home != "" {
-		kubeconfig = fmt.Sprintf("%s/.kube/config", home)
-	}
-	kubeconfigFlag := flag.String("kubeconfig", kubeconfig, "path to the kubeconfig file")
+	// set up args, namely kubeconfig / node name
+	fmt.Printf("starting main program\n")
+	kubeconfig := flag.String("kubeconfig", "test", "Location of your kubeconfig")
+	nodeName := flag.String("node", "", "Name of the node to drain.")
 	flag.Parse()
+	fmt.Printf("flag: %v:\n", *kubeconfig)
+	fmt.Printf("node: %v:\n", *nodeName)
 
-	// Create Kubernetes client from kubeconfig
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfigFlag)
+	// Load Kubernetes config
+	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
-		log.Fatalf("failed to build kubeconfig: %v", err)
+		fmt.Printf("Error loading kubeconfig: %v\n", err)
+		os.Exit(1)
 	}
 
 	kubeClient, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		log.Fatalf("failed to create kube client: %v", err)
+		fmt.Printf("Error creating Kubernetes client: %v\n", err)
+		os.Exit(1)
 	}
 
-	// Create the Drainer object
-	platformHelpers := platforms.NewHelpers() // Implement your platform helpers if needed
-	drainer, err := drain.NewDrainer(platformHelpers)
+	node, err := kubeClient.CoreV1().Nodes().Get(context.TODO(), *nodeName, metav1.GetOptions{})
 	if err != nil {
-		log.Fatalf("failed to create drainer: %v", err)
+		fmt.Printf("Error retrieving node: %v\n", err)
+		os.Exit(1)
 	}
 
-	// Get the node you want to drain
-	nodeName := "your-node-name" // Set the node name
-	node, err := kubeClient.CoreV1().Nodes().Get(context.TODO(), nodeName, metav1.GetOptions{})
-	if err != nil {
-		log.Fatalf("failed to get node %s: %v", nodeName, err)
-	}
+	// Print out the node details
+	fmt.Printf("Node Name: %s\n", node.Name)
+	fmt.Printf("Node Status: %s\n", node.Status.Phase)
+	fmt.Printf("Node Labels: %v\n", node.Labels)
 
-	// Drain the node
-	drainSuccess, err := drainer.DrainNode(context.TODO(), node, true)
-	if err != nil {
-		log.Fatalf("failed to drain node %s: %v", nodeName, err)
-	}
-	if drainSuccess {
-		log.Printf("Node %s drained successfully", nodeName)
-	} else {
-		log.Printf("Failed to drain node %s, retrying...", nodeName)
-	}
 
-	// Complete the drain
-	completeSuccess, err := drainer.CompleteDrainNode(context.TODO(), node)
-	if err != nil {
-		log.Fatalf("failed to complete drain on node %s: %v", nodeName, err)
-	}
-	if completeSuccess {
-		log.Printf("Drain on node %s completed successfully", nodeName)
-	} else {
-		log.Printf("Failed to complete drain on node %s", nodeName)
-	}
+	// Now do the platform specific stuff
+
+
+
 }
