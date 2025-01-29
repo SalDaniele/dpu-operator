@@ -14,18 +14,30 @@ import (
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
-func createNewDrainer() *drain.Drainer {
+var restConfig *rest.Config
+var k8sClient client.Client
+var testCluster testutils.KindCluster
+
+func createNewDrainer() (drain.DrainInterface, error) {
 	platform, err := platforms.NewDefaultPlatformHelper()
-	gomega.Expect(err).NotTo(gomega.HaveOccurred())
+	if err != nil {
+		return nil, err
+	}
 
-	drainer, err := drain.NewDrainer(platform)
-	gomega.Expect(err).NotTo(gomega.HaveOccurred())
+	kclient, err := kubernetes.NewForConfig(restConfig)
+	if err != nil {
+		return nil, err
+	}
 
-	return drainer
+	return &drain.Drainer{
+		kubeClient:      kclient,
+		platformHelpers: platform,
+	}, nil
 }
 
 func TestKindCluster(t *testing.T) {
@@ -34,9 +46,6 @@ func TestKindCluster(t *testing.T) {
 }
 
 var _ = ginkgo.Describe("Kind Cluster Setup and Validation", ginkgo.Ordered, func() {
-	var restConfig *rest.Config
-	var k8sClient client.Client
-	var testCluster testutils.KindCluster
 
 	// Setup for the whole test suite
 	ginkgo.BeforeAll(func() {
