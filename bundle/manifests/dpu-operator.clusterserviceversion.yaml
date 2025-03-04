@@ -113,6 +113,7 @@ spec:
           - apps
           resources:
           - daemonsets
+          - services
           verbs:
           - create
           - delete

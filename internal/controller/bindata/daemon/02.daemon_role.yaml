@@ -54,6 +54,7 @@ rules:
   - apps
   resources:
   - daemonsets
+  - services
   verbs:
   - get
   - list
